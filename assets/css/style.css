@@ -1,10 +1,24 @@
-img {
+.character {
+  display: inline-block;
   height: 150px;
   width: 150px;
   border-style: solid;
-  border-width: 0px;
+  margin: 10px;
+  border-width: 3px;
   border-radius: 2px;
   object-fit: cover;
+  -o-background-size: 150px 150px;
+  -webkit-background-size: 150px 150px;
+  -khtml-background-size:  150px 150px;
+  -moz-background-size:  150px 150px;
+  background-size:  150px 150px;
+}
+
+.character h2 {
+  text-align: center;
+  margin-top: 100px;
+  padding: 7px;
+  color: white;
 }
 
 
