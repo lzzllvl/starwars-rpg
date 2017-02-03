@@ -36,19 +36,27 @@ characterArray.push(yoda);
 var grievous = new Character("General Grievous", 10, 4, 45, "gray", "assets/images/grievous.jpg");
 characterArray.push(grievous);
 
-$(document).ready(function(){
-  for(var i = 0; i<characterArray.length; i++){
-    var ch = $("<div>");
-    var id = characterArray[i].name.substr(0, characterArray[i].name.indexOf(" "));
-    ch.attr("id", id);
-    ch.addClass("character");
-    ch.css("background-image", "url("+ characterArray[i].imagePath +")");
-    ch.html("<h2>"+characterArray[i].name+"</h2>");
-    ch.css("border-color", characterArray[i].color);
-    ch.children().css("background-color", characterArray[i].color);
-    $("#choices").append(ch);
-    var hashid = "#"+id;
+
+var playerObj = {};
+var opponentObj = {};
+
+var  createCharacters = function(currentValue){
+      var ch = $("<div>");
+      var id = currentValue.name.substr(0, currentValue.name.indexOf(" "));
+      ch.attr("id", id);
+      ch.addClass("character");
+      ch.css("background-image", "url("+ currentValue.imagePath +")");
+      ch.html("<h2>"+currentValue.name+"</h2>");
+      ch.css("border-color", currentValue.color);
+      ch.children().css("background-color", currentValue.color);
+      $("#choices").append(ch);
+  }
+
+  var addInitialClick = function(currentValue){
+    var id = currentValue.name.substr(0, currentValue.name.indexOf(" "));// reusing, not a fan of this
+    var hashid = "#" + id;
     $(hashid).on("click", function(){
+      playerObj = currentValue;
       var playerChoice = $("#player");
       $(this).appendTo(playerChoice);
       var enemies = $("#choices > div");
@@ -57,9 +65,40 @@ $(document).ready(function(){
       enemies.on("click", function(){
         var opponent = $("#opponent");
         $(this).appendTo(opponent);
+        getOpponentObj();
+        play(playerObj, opponentObj);
+        });
       });
-    });
+}
+
+var getOpponentObj = function(){
+  var temp = $("#opponent > div").attr("id");
+  var n = characterArray.filter(function(element){
+    if(element.name.includes(temp)){
+      return element;
+    }
+  });
+  opponentObj = n[0];
+}
+
+var play = function(player, opponent){
+  var JQplayer = $("#player");
+  var JQopponent = $("#opponent");
+  console.log(player)
+  console.log(opponent)
+
+    JQplayer.on("click", function(){
+      if(!player.isDead() && !opponent.isDead()){
+        player.attack(opponent);
+        console.log(player.health);
+      } else if (opponent.isDead()){
+        $("#opponent").empty();
+      }
+  })
+}
+
+$(document).ready(function(){
+    characterArray.map(createCharacters);
+    characterArray.map(addInitialClick);
   }
-
-
-});
+);
