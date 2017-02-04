@@ -44,9 +44,10 @@ var  createCharacters = function(currentValue){
       var ch = $("<div>");
       var id = currentValue.name.substr(0, currentValue.name.indexOf(" "));
       ch.attr("id", id);
+      ch.attr("data-health", currentValue.health);
       ch.addClass("character");
       ch.css("background-image", "url("+ currentValue.imagePath +")");
-      ch.html("<h2>"+currentValue.name+"</h2>");
+      ch.html("<h2>"+currentValue.name+"</h2><hr><h5>"+ch.data("health")+"</h5>");
       ch.css("border-color", currentValue.color);
       ch.children().css("background-color", currentValue.color);
       $("#choices").append(ch);
@@ -61,6 +62,7 @@ var addPickClicks = function(currentValue){
       $(this).appendTo(playerChoice);
       var enemies = $("#choices > div");
       $("#enemies").append(enemies);
+      $("#choices").remove();
       enemies.off("click");
       enemies.on("click", function(){
         var opponent = $("#opponent");
@@ -69,17 +71,12 @@ var addPickClicks = function(currentValue){
         play(playerObj, opponentObj);
         enemies.off();
         });
-
       });
 }
 
-var nextOpponentClick = function(){
-  $("#enemies > div").on("click", function(){
-    var newOpponent = $("#opponent");
-    $(this).appendTo(newOpponent);
-  });
-}
+var createHealth = function(currentValue){
 
+}
 var getOpponentObj = function(){
   var temp = $("#opponent > div").attr("id");
   var n = characterArray.filter(function(element){
@@ -93,19 +90,28 @@ var getOpponentObj = function(){
 var play = function(player, opponent){
   var JQplayer = $("#player");
   var JQopponent = $("#opponent");
-  console.log(player)
-  console.log(opponent)
-
     JQplayer.on("click", function(){
-      if(!player.isDead() && !opponent.isDead()){
-        player.attack(opponent);
-        console.log(player.health);
-      } else if (opponent.isDead()){
+
+      if (player.strength >= opponent.health){
         $("#opponent > div").remove();
+        JQplayer.off("click");
         nextOpponentClick();
       }
-  })
+      else if(!player.isDead() && !opponent.isDead()){
+        player.attack(opponent);
+      }
+  });
 }
 
+var nextOpponentClick = function(){
+  $("#enemies > div").on("click", function(){
+    var newOpponent = $("#opponent");
+    $(this).appendTo(newOpponent);
+    getOpponentObj();
+    play(playerObj, opponentObj);
+  });
+}
+
+characterArray.map(createHealth);
 characterArray.map(createCharacters);
 characterArray.map(addPickClicks);
