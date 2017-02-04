@@ -21,6 +21,11 @@
   color: white;
 }
 
+.area {
+  text-align: center;
+  height: 200px;
+  width: 100%;
+}
 
 /**
   * This container was created soley for the

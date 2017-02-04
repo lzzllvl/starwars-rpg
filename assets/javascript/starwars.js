@@ -27,13 +27,13 @@ function Character(name, strength, counter, health, color, imagePath){
 }
 
 var characterArray = [];
-var mace = new Character("Mace Windu", 10, 5, 50, "purple", "assets/images/mace.jpg");
+var mace = new Character("Mace Windu", 10, 5, 100, "purple", "assets/images/mace.jpg");
 characterArray.push(mace);
-var vader = new Character("Darth Vader", 13, 7, 60, "red", "assets/images/vader.jpg");
+var vader = new Character("Darth Vader", 13, 7, 120, "red", "assets/images/vader.jpg");
 characterArray.push(vader);
-var yoda = new Character("Yoda ", 12, 10, 70, "green", "assets/images/yoda.jpg");
+var yoda = new Character("Yoda ", 12, 10, 110, "green", "assets/images/yoda.jpg");
 characterArray.push(yoda);
-var grievous = new Character("General Grievous", 10, 4, 45, "gray", "assets/images/grievous.jpg");
+var grievous = new Character("General Grievous", 10, 4, 95, "gray", "assets/images/grievous.jpg");
 characterArray.push(grievous);
 
 
@@ -52,7 +52,7 @@ var  createCharacters = function(currentValue){
       $("#choices").append(ch);
   }
 
-  var addInitialClick = function(currentValue){
+var addPickClicks = function(currentValue){
     var id = currentValue.name.substr(0, currentValue.name.indexOf(" "));// reusing, not a fan of this
     var hashid = "#" + id;
     $(hashid).on("click", function(){
@@ -67,8 +67,17 @@ var  createCharacters = function(currentValue){
         $(this).appendTo(opponent);
         getOpponentObj();
         play(playerObj, opponentObj);
+        enemies.off();
         });
+
       });
+}
+
+var nextOpponentClick = function(){
+  $("#enemies > div").on("click", function(){
+    var newOpponent = $("#opponent");
+    $(this).appendTo(newOpponent);
+  });
 }
 
 var getOpponentObj = function(){
@@ -92,13 +101,11 @@ var play = function(player, opponent){
         player.attack(opponent);
         console.log(player.health);
       } else if (opponent.isDead()){
-        $("#opponent").empty();
+        $("#opponent > div").remove();
+        nextOpponentClick();
       }
   })
 }
 
-$(document).ready(function(){
-    characterArray.map(createCharacters);
-    characterArray.map(addInitialClick);
-  }
-);
+characterArray.map(createCharacters);
+characterArray.map(addPickClicks);
