@@ -74,7 +74,7 @@ var addPickClicks = function(currentValue){
       });
 }
 
-var createHealth = function(currentValue){
+var createHealth = function(){
 
 }
 var getOpponentObj = function(){
