@@ -74,9 +74,18 @@ var addPickClicks = function(currentValue){
       });
 }
 
-var createHealth = function(){
-
+var updateHealthData = function(player, opponent){
+  var h = $("#player > div").data('health');
+  h -= opponent.counter;
+  var o = $("#opponent > div").data('health');
+  o -= player.strength;
+  $("#player > div").attr("data-health", h);
+  $("#opponent > div").attr("data-health", o);
+  $("#player > div > h5").html(h);
+  $("#opponent > div > h5").html(o);
 }
+
+
 var getOpponentObj = function(){
   var temp = $("#opponent > div").attr("id");
   var n = characterArray.filter(function(element){
@@ -87,18 +96,23 @@ var getOpponentObj = function(){
   opponentObj = n[0];
 }
 
+
 var play = function(player, opponent){
   var JQplayer = $("#player");
-  var JQopponent = $("#opponent");
     JQplayer.on("click", function(){
 
       if (player.strength >= opponent.health){
         $("#opponent > div").remove();
         JQplayer.off("click");
         nextOpponentClick();
+        console.log("running Win")
+        console.log(opponent)
       }
       else if(!player.isDead() && !opponent.isDead()){
         player.attack(opponent);
+        updateHealthData(player,opponent);
+        console.log(opponent);
+        console.log("running keep playing");
       }
   });
 }
@@ -112,6 +126,6 @@ var nextOpponentClick = function(){
   });
 }
 
-characterArray.map(createHealth);
+
 characterArray.map(createCharacters);
 characterArray.map(addPickClicks);
