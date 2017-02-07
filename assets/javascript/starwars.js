@@ -35,6 +35,9 @@ var yoda = new Character("Yoda ", 12, 10, 110, "green", "assets/images/yoda.jpg"
 characterArray.push(yoda);
 var grievous = new Character("General Grievous", 10, 4, 95, "gray", "assets/images/grievous.jpg");
 characterArray.push(grievous);
+// var rey = new Character("Rey ", 11, 6, 105, "blue", "assets/images/rey.jpg");
+// characterArray.push(rey);
+
 
 var playerObj = {};
 var opponentObj = {};
