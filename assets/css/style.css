@@ -4,6 +4,10 @@ body {
   background-repeat: no-repeat;
 }
 
+button {
+  margin: 5px;
+}
+
 .character {
   display: inline-block;
   height: 150px;
@@ -39,7 +43,7 @@ hr {
 }
 .area {
   text-align: center;
-  height: 190px;
+  height: auto;
   width: 100%;
   margin-bottom: 15px;
 }
