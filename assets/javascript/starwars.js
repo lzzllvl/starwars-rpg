@@ -29,10 +29,10 @@ var vader = new Character("Darth Vader", 13, 7, 120, "red", "assets/images/vader
 characterArray.push(vader);
 var yoda = new Character("Yoda ", 12, 10, 110, "green", "assets/images/yoda.jpg");
 characterArray.push(yoda);
-// var grievous = new Character("General Grievous", 10, 4, 95, "gray", "assets/images/grievous.jpg");
-// characterArray.push(grievous);
-// var rey = new Character("Rey ", 11, 6, 105, "blue", "assets/images/rey.jpg");
-// characterArray.push(rey);
+var grievous = new Character("General Grievous", 10, 4, 95, "gray", "assets/images/grievous.jpg");
+characterArray.push(grievous);
+var rey = new Character("Rey ", 11, 6, 105, "blue", "assets/images/rey.jpg");
+characterArray.push(rey);
 
 //initialize empty objects, these will be overridden with the appropriate
 //character object when the click events execute.
@@ -134,11 +134,9 @@ var battle = function(player, opponent){
     nextOpponentClick();
     updateHealthData(player, opponent);
     $("button").remove();
-    console.log("ran button.remove");
   } else if(!player.isDead() && !opponent.isDead()){
     attack(player, opponent);
     updateHealthData(player, opponent);
-    console.log("ran keep playing");
   }
 };
 
@@ -148,6 +146,8 @@ var nextOpponentClick = function(){
     $(this).appendTo(newOpponent);
     getOpponentObj();
     play(playerObj, opponentObj);
+    $(this).off("click");
+    $("#enemies > div").off("click");
   });
 };
 
