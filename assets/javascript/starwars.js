@@ -44,12 +44,15 @@ characterArray.push(rey);
 var playerObj = {};
 var opponentObj = {};
 
+
+//straightforward attack function, this was previously a method in the \
+//character objects, but I pulled it out as we want the objects to exist without
+//the other object needed for attack.
 var attack = function(agent, patient){
   patient.health -= agent.strength;
   agent.strength += 6;
   agent.health -= patient.counter;
 };
-
 
 
 //this function is designed to be run with characterArray.map(***).
@@ -98,11 +101,22 @@ var addPickClicks = function(currentValue){
       });
 }
 
+
+//these map calls are passing these functions as a callback.
+//dont use parentheses or pass parameters because that will cause them to
+//evaluate the function on pass, then do nothing.
+characterArray.map(createCharacters);
+characterArray.map(addPickClicks);
+
+
+//this uses the data from the current player and opponent object.
+//it will change the html in the health bars to match the current object value
 var updateHealthData = function(player, opponent){
   var enemies = $("#enemies > div");
   var currentOpponent = $("#opponent > div");
   var h = player.health;
   var o = opponent.health;
+
   if(player.isDead()){
     $("button").remove();
     gameOver("l");
@@ -115,9 +129,11 @@ var updateHealthData = function(player, opponent){
   $("#opponent > div").attr("data-health", o);
   $("#player > div > h5").html(h);
   $("#opponent > div > h5").html(o);
-
 }
 
+//this function uses the Id attribute to match it to an object in
+//characterArray via filter(). It will turn the opponentObject
+//into the returned value from filter
 var getOpponentObj = function(){
   var temp = $("#opponent > div").attr("id");
   var n = characterArray.filter(function(element){
@@ -128,6 +144,8 @@ var getOpponentObj = function(){
   opponentObj = n[0];
 }
 
+//play() is called once the opponent is clicked,
+//it adds the attack button and calls the battle() function
 var play = function(player, opponent){
   var JQplayer = $("#player > div");
   var button = $("<button>");
@@ -141,21 +159,23 @@ var play = function(player, opponent){
 
 //this function provides the logic for the game loss condition
 var gameOver = function(condition){
+  //initialize a variable which will be used to fill in the end message
   var htmlString = ""
   if(condition == "w"){
-    htmlString = "You Won!"
+    htmlString = "Congratulations <br> You Won!"
   } else if (condition == "l"){
     htmlString = "You Lose."
   }
+  //create the new DOM objects and populate them
   var newSpan = $("<span>");
   var playAgainButton = $("<button>");
   newSpan.appendTo($("#player > div"));
-  playAgainButton.appendTo($("#player > div"))
+  $("#player > div").append(playAgainButton);
   newSpan.html(htmlString);
-  newSpan.css("color", "white")
+  newSpan.css("color", "white");
   playAgainButton.html("Play Again?");
-
   playAgainButton.on("click", function(){
+    //call the reset functions
     resetObjects();
     resetGame();
   })
@@ -181,19 +201,27 @@ var resetGame = function() {
   characterArray.map(addPickClicks);
 }
 
+//this function is called when the attack button is clicked
 var battle = function(player, opponent){
+    //if the player wins the battle, it removes and calls the next opponent function
     if (player.strength >= opponent.health){
       attack(player, opponent);
       $("#opponent > div").remove();
       nextOpponentClick();
-      updateHealthData(player, opponent);
       $("button").remove();
+      updateHealthData(player, opponent);
+
+      //if the player hasn't won yet, attack as usual
     } else if(!player.isDead() && !opponent.isDead()){
        attack(player, opponent);
        updateHealthData(player, opponent);
     }
 };
 
+//this function is called when a battle ends, this adds the click events back to the
+//enemies div, if there are no enemies it will call the gameOver(condition) function
+//with the win condition. If the player is dead, it will set health to 0
+//and run gameOver() with the lose condition
 var nextOpponentClick = function(){
   var enemies = $("#enemies > div");
   if(enemies[0] != undefined){
@@ -207,6 +235,3 @@ var nextOpponentClick = function(){
     });
   }
 };
-
-characterArray.map(createCharacters);
-characterArray.map(addPickClicks);
