@@ -19,19 +19,24 @@ function Character(name, strength, counter, health, color, imagePath){
       return true;
     }
   };
+
+  this.reset = function(){
+    this.strength = strength;
+    this.health = health;
+  }
 }
 
 //define character objects and push them into the characterArray
 var characterArray = [];
-var mace = new Character("Mace Windu", 10, 5, 100, "purple", "assets/images/mace.jpg");
+var mace = new Character("Mace Windu", 13, 11, 120, "purple", "assets/images/mace.jpg");
 characterArray.push(mace);
-var vader = new Character("Darth Vader", 13, 7, 120, "red", "assets/images/vader.jpg");
+var vader = new Character("Darth Vader", 19, 14, 130, "red", "assets/images/vader.jpg");
 characterArray.push(vader);
-var yoda = new Character("Yoda ", 12, 10, 110, "green", "assets/images/yoda.jpg");
+var yoda = new Character("Yoda ", 17, 16, 125, "green", "assets/images/yoda.jpg");
 characterArray.push(yoda);
-var grievous = new Character("General Grievous", 10, 4, 95, "gray", "assets/images/grievous.jpg");
+var grievous = new Character("General Grievous", 13, 9, 110, "gray", "assets/images/grievous.jpg");
 characterArray.push(grievous);
-var rey = new Character("Rey ", 11, 6, 105, "blue", "assets/images/rey.jpg");
+var rey = new Character("Rey ", 16, 11, 115, "blue", "assets/images/rey.jpg");
 characterArray.push(rey);
 
 //initialize empty objects, these will be overridden with the appropriate
@@ -94,12 +99,23 @@ var addPickClicks = function(currentValue){
 }
 
 var updateHealthData = function(player, opponent){
+  var enemies = $("#enemies > div");
+  var currentOpponent = $("#opponent > div");
   var h = player.health;
   var o = opponent.health;
+  if(player.isDead()){
+    $("button").remove();
+    gameOver("l");
+    h = 0; // so health doesn't display negative
+  } else if (enemies[0] == undefined && currentOpponent[0] == undefined){
+    $("button").remove();
+    gameOver("w");
+  }
   $("#player > div").attr("data-health", h);
   $("#opponent > div").attr("data-health", o);
   $("#player > div > h5").html(h);
   $("#opponent > div > h5").html(o);
+
 }
 
 var getOpponentObj = function(){
@@ -112,11 +128,7 @@ var getOpponentObj = function(){
   opponentObj = n[0];
 }
 
-var counter = 0;
-
 var play = function(player, opponent){
-  counter++;
-  console.log("ran play "+counter+" times")
   var JQplayer = $("#player > div");
   var button = $("<button>");
   button.html("Attack");
@@ -127,32 +139,73 @@ var play = function(player, opponent){
   });
 }
 
-var battle = function(player, opponent){
-  if (player.strength >= opponent.health){
-    attack(player, opponent);
-    $("#opponent > div").remove();
-    nextOpponentClick();
-    updateHealthData(player, opponent);
-    $("button").remove();
-  } else if(!player.isDead() && !opponent.isDead()){
-    attack(player, opponent);
-    updateHealthData(player, opponent);
+//this function provides the logic for the game loss condition
+var gameOver = function(condition){
+  var htmlString = ""
+  if(condition == "w"){
+    htmlString = "You Won!"
+  } else if (condition == "l"){
+    htmlString = "You Lose."
   }
+  var newSpan = $("<span>");
+  var playAgainButton = $("<button>");
+  newSpan.html(htmlString);
+  newSpan.css("color", "white")
+  playAgainButton.html("Play Again?");
+  newSpan.appendTo($("#player > div"));
+  playAgainButton.appendTo($("#player > div"))
+  playAgainButton.on("click", function(){
+    resetObjects();
+    resetGame();
+  })
 };
 
-var nextOpponentClick = function(){
-  $("#enemies > div").on("click", function(){
-    var newOpponent = $("#opponent");
-    $(this).appendTo(newOpponent);
-    getOpponentObj();
-    play(playerObj, opponentObj);
-    $(this).off("click");
-    $("#enemies > div").off("click");
+//this function will reset the game objects by invoking their reset method
+var resetObjects = function(){
+  characterArray.map(function(currentValue){
+    currentValue.reset();
   });
 };
 
-//still to do, find out a better way for DOM logic. Need a game end scenario.
+//this function will reset the game board html
+var resetGame = function() {
+  $(".character").remove();//remove all remaining character divs
+  //need to remake the #choices section
+  var choices = $("<section>")
+  choices.html("<h3>Try A Different Strategy</h3>");
+  choices.attr("id", "choices");
+  choices.addClass("area");
+  choices.prependTo(".main-container")
+  characterArray.map(createCharacters);
+  characterArray.map(addPickClicks);
+}
 
+var battle = function(player, opponent){
+    if (player.strength >= opponent.health){
+      attack(player, opponent);
+      $("#opponent > div").remove();
+      nextOpponentClick();
+      updateHealthData(player, opponent);
+      $("button").remove();
+    } else if(!player.isDead() && !opponent.isDead()){
+       attack(player, opponent);
+       updateHealthData(player, opponent);
+    }
+};
+
+var nextOpponentClick = function(){
+  var enemies = $("#enemies > div");
+  if(enemies[0] != undefined){
+    $("#enemies > div").on("click", function(){
+      var newOpponent = $("#opponent");
+      $(this).appendTo(newOpponent);
+      getOpponentObj();
+      play(playerObj, opponentObj);
+      $(this).off("click");
+      $("#enemies > div").off("click");
+    });
+  }
+};
 
 characterArray.map(createCharacters);
 characterArray.map(addPickClicks);
