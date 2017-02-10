@@ -149,11 +149,12 @@ var gameOver = function(condition){
   }
   var newSpan = $("<span>");
   var playAgainButton = $("<button>");
+  newSpan.appendTo($("#player > div"));
+  playAgainButton.appendTo($("#player > div"))
   newSpan.html(htmlString);
   newSpan.css("color", "white")
   playAgainButton.html("Play Again?");
-  newSpan.appendTo($("#player > div"));
-  playAgainButton.appendTo($("#player > div"))
+
   playAgainButton.on("click", function(){
     resetObjects();
     resetGame();
