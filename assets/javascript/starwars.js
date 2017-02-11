@@ -77,7 +77,7 @@ var createCharacters = function(currentValue){
 * It takes the divs created by createCharacters() and adds click events
 * for player selection. It then moves the player to the #player section
 * adds the rest to the #enemies section, then removes the player choice click events
-* via $().off("click"). Then it will add the opponent click events which moves
+* via $().off("click"). Then it  will add the opponent click events which moves
 * the ".character" div to the #opponent section. phew - thats a lot.
 */
 var addPickClicks = function(currentValue){
